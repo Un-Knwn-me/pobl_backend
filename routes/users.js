@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {
     let data = new UserModel(req.body);
     await data.save();
 
-    res.status(200).json({ message: "User signed up successfully" });
+    res.status(201).json({ message: "User signed up successfully" });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({message: 'Internal Server error'});
