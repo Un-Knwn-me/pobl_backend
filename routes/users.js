@@ -1,5 +1,5 @@
 var express = require('express');
-const { hashPassword, hashCompare, createToken } = require('../config/auth');
+const { hashPassword, hashCompare, createToken, isSignedIn } = require('../config/auth');
 const { UserModel } = require('../models/Users');
 const { AttendanceModel } = require('../models/Attendance');
 var router = express.Router();
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     // Token creation
     const token = createToken({ _id: user._id });
 
-    res.status(200).json({ message: "User successfully logged in", token, userId: user._id, attendanceId: attendance.location });
+    res.status(200).json({ message: "User successfully logged in", token, userId: user._id });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Punch-in route
-router.post('/punchin', async (req, res) => {
+router.post('/punchin', isSignedIn, async (req, res) => {
   const { location, userId } = req.body;
 
   try {
@@ -72,7 +72,7 @@ router.post('/punchin', async (req, res) => {
 });
 
 // Sign-out route
-router.post('/punchout', async (req, res) => {
+router.post('/punchout', isSignedIn, async (req, res) => {
   try {
     const { userId } = req.body;
     const attendance = await AttendanceModel.findOne({ user: userId, signOut: null });
@@ -89,7 +89,7 @@ router.post('/punchout', async (req, res) => {
 });
 
 // Break start route
-router.post('/breakstart', async (req, res) => {
+router.post('/breakstart', isSignedIn, async (req, res) => {
   try {
     const { userId } = req.body;
     const attendance = await AttendanceModel.findOne({ user: userId, signOut: null });
@@ -106,7 +106,7 @@ router.post('/breakstart', async (req, res) => {
 });
 
 // Break end route
-router.post('/breakend', async (req, res) => {
+router.post('/breakend', isSignedIn, async (req, res) => {
   try {
     const { userId } = req.body;
     const attendance = await AttendanceModel.findOne({ user: userId, signOut: null });

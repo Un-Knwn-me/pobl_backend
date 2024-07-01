@@ -38,4 +38,22 @@ const decodeToken = async(token) => {
   }
 };
 
-module.exports = {hashCompare, hashPassword, createToken, decodeToken,}
+const isSignedIn = async (req, res, next) => {
+  try {
+    const header = await req.headers.authorization;
+  
+    if (header) {
+    let token = await header.split(' ')[1];
+    let data = await decodeToken(token);   
+    req.user = {_id: data._id};
+    next();       
+   } else {
+   return res.status(400).json({ message: "Access denied" });
+}
+  }
+   catch (error) {
+    return res.status(500).json({ message: "Invalid Authentication", error });
+  }
+};
+
+module.exports = {hashCompare, hashPassword, createToken, decodeToken, isSignedIn}
