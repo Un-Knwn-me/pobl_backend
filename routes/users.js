@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
 
 // user login
 router.post('/login', async (req, res) => {
-  const { email, password, location } = req.body;
+  const { email, password } = req.body;
 
   try {
     let user = await UserModel.findOne({ email });
@@ -45,14 +45,6 @@ router.post('/login', async (req, res) => {
     // Token creation
     const token = createToken({ _id: user._id });
 
-    // Create attendance record for sign-in
-    const attendance = new AttendanceModel({
-      user: user._id,
-      signIn: new Date(),
-      location: location
-    });
-    await attendance.save();
-
     res.status(200).json({ message: "User successfully logged in", token, userId: user._id, attendanceId: attendance.location });
   } catch (err) {
     console.error(err.message);
@@ -60,8 +52,27 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Punch-in route
+router.post('/punchin', async (req, res) => {
+  const { location, userId } = req.body;
+
+  try {
+    const attendance = new AttendanceModel({
+      user: userId,
+      signIn: new Date(),
+      location: location
+    });
+    await attendance.save();
+
+    res.status(200).json({ message: "Punch-in recorded", attendanceId: attendance._id });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // Sign-out route
-router.post('/signout', async (req, res) => {
+router.post('/punchout', async (req, res) => {
   try {
     const { userId } = req.body;
     const attendance = await AttendanceModel.findOne({ user: userId, signOut: null });
