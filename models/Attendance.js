@@ -28,6 +28,7 @@ const attendanceSchema = new mongoose.Schema({
     heading: Number,
     speed: Number,
     altitudeAccuracy: Number,
+    mocked: Boolean
   }
 });
 

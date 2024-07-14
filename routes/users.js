@@ -57,22 +57,23 @@ router.post('/punchin', isSignedIn, async (req, res) => {
     try {
       const { location } = req.body;
       const { userId } = req.user;
-      const { coords } = location;
+      console.log('bodie: ',req.body);
     const attendance = new AttendanceModel({
       user: userId,
       signIn: new Date(),
       location: {
         type: 'Point',
-        coordinates: [coords.longitude, coords.latitude],
-        accuracy: coords.accuracy,
-        altitude: coords.altitude,
-        heading: coords.heading,
-        speed: coords.speed,
-        altitudeAccuracy: coords.altitudeAccuracy,
+        coordinates: [location.coords.longitude, location.coords.latitude],
+        accuracy: location.coords.accuracy,
+        speed: location.coords.speed,
+        heading: location.coords.heading,
+        altitude: location.coords.altitude,
+        altitudeAccuracy: location.coords.altitudeAccuracy,
+        mocked: location.mocked
       }
     });
     await attendance.save();
-
+    console.log(attendance);
     res.status(200).json({ message: "Punch-in recorded", attendanceId: attendance._id });
   } catch (err) {
     console.error(err.message);
