@@ -57,11 +57,19 @@ router.post('/punchin', isSignedIn, async (req, res) => {
     try {
       const { location } = req.body;
       const { userId } = req.user;
-      
+      const { coords } = location;
     const attendance = new AttendanceModel({
       user: userId,
       signIn: new Date(),
-      location: location
+      location: {
+        type: 'Point',
+        coordinates: [coords.longitude, coords.latitude],
+        accuracy: coords.accuracy,
+        altitude: coords.altitude,
+        heading: coords.heading,
+        speed: coords.speed,
+        altitudeAccuracy: coords.altitudeAccuracy,
+      }
     });
     await attendance.save();
 
