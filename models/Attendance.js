@@ -13,10 +13,22 @@ const attendanceSchema = new mongoose.Schema({
   signOut: Date,
   breakStart: [Date],
   breakEnd: [Date],
-  location: {
-    type: { type: String },
-    coordinates: [Number],
-  },
+ location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    },
+    accuracy: Number,
+    altitude: Number,
+    heading: Number,
+    speed: Number,
+    altitudeAccuracy: Number,
+  }
 });
 
 // attendanceSchema.virtual('duration').get(function() {

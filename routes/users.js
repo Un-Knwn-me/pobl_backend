@@ -55,9 +55,9 @@ router.post('/login', async (req, res) => {
 // Punch-in route
 router.post('/punchin', isSignedIn, async (req, res) => {
     try {
-      const { location, userId } = req.body;
-      console.log(req.body);
-      console.log(req.user);
+      const { location } = req.body;
+      const { userId } = req.user;
+      
     const attendance = new AttendanceModel({
       user: userId,
       signIn: new Date(),
