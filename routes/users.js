@@ -56,10 +56,10 @@ router.post('/login', async (req, res) => {
 router.post('/punchin', isSignedIn, async (req, res) => {
     try {
       const { location } = req.body;
-      const { userId } = req.user;
+      const { _id: userId } = req.user;
       console.log('bodie: ',req.body);
     const attendance = new AttendanceModel({
-      user: userId,
+      user: userId, 
       signIn: new Date(),
       location: {
         type: 'Point',
